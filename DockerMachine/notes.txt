@@ -1,0 +1,75 @@
+Docker Machine
+======================
+
+What is a Docker Machine?
+-----------------------------
+
+A tool that lets you install Docker Engine on:
+ - Virtual hosts
+ - Your local system
+ - Servers in your data center
+ - Cloud providers
+
+Uses Cases:
+ - I have an older desktop system and want to run Docker on Win or MAc
+ - I want to provision Docker hosts on remote systems
+
+Docker-machine Commands
+---------------------------
+
+docker-machine commands:
+ - start
+ - inspect
+ - stop
+ - restart a managed host
+ - upgrade Docker
+
+Machine Drivers (The way docker interacts with the host):
+ - Amazon Web Services
+ - Microsoft Azure
+ - Digital Ocean
+ - Google Compute Engine
+ - Generic (physical host or vm)
+ - Microsoft Hyper-V
+ - OpenStack
+ - Oracle VirtualBox
+
+======
+Installing Docker-Machine
+===========================
+
+$ base=https://github.com/docker/machine/releases/download/v0.14.0 $$
+curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/usr/local/bin/docker-machine &&
+chmod +x /usr/local/bin/docker-machine
+
+$ docker-machine version
+
+Setup Env (with virtualbox)
+$ docker-machine create -d virtualbox vbox-test : Create Docker node
+$ docker-machine ls : List the machines
+$ eval $(docker-machine env vbox-test) : Activate the machine
+
+
+====
+Docker-Machine Commands
+========================
+
+$ docker-machine -h (this will show the storage path)
+$ docker-machine active : Which machine is active
+$ docker-machine inspect <machine> : Inspect the machine
+$ docker-machine ls : List the machines
+$ docker-machine create -d virtualbox vbox-test2
+$ docker-machine provision <machine> : Re-provision existing machines
+$ docker-machine restart <machine> : Restart a machine
+$ docker-machine ssh <machine> : SSH into a machine
+$ docker-machine status <machine> : Status of a machine
+$ docker-machine stop <machine> : Stop a machine
+$ docker-machine start <machine> : Start a machine
+$ docker-machine url <machine> : Get the url of a machine
+$ eval $(docker-machine env <machine>) : Activate a machine
+
+When a machine is active any time I go and execute a Docker 
+command it's going to be against that Docker node.
+$ docker run -d --name nginx-test -p 80:80 nginx:latest
+$ docker machine ip vbox-test
+$ curl <machine-ip>
