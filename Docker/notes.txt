@@ -1,0 +1,120 @@
+Docker
+===================
+
+
+Docker commands
+
+$ docker attach: Attach local standard input, output and error
+streams to a running container.
+$ docker build: Build an image from a Dockerfile
+$ docker exec: Run a command in a running container
+$ docker images: List of images
+$ docker info: List images
+$ docker inspect: return low-level information about docker objects
+$ docker logs: Fetch the logs of a cntainer
+$ docker network: Manage networks
+$ docker node: Manage Swarm nodes
+$ docker ps: List containers
+$ docker pull: Pull an image or a repository from registry
+$ docker push: Push an image or a repository to a registry
+$ docker restart: Restart one or more containers
+$ dokcer rm: Remove one or more containers
+$ docker rmi: Remove one or more images
+$ docker run: Run a command in a new container
+$ docker start: Start one or more stopped containers
+$ docker stop: Stop one or more running containers
+$ docker swarm: Manage Swarm
+$ docker volume: Manage Volumes
+
+=======
+Docker Images
+==========================
+
+$ sudo mkdir -p /Docker/Images
+$ sudo vi Dockerfile
+
+Dockerfile:
+FROM nginx
+WORKDIR /usr/share/nginx/html
+COPY index.html .
+
+index.html:
+<html>
+  <header>
+    <title>Hello!</title>
+  </header>
+  <body>
+    Hello There!
+  </body>
+</html>
+
+Build the image
+$ docker build -t la/static:latest .
+
+Start a container
+$ docker run -d --name=static-site -p 80:80 la/static:latest
+
+======
+Docker Volumes
+==================
+
+Run a container with a volume devtest-vol in the containers's /app
+$ docker run -d --name=devtest -v devtest-vol:/app nginx:latest
+$ docker run -d --name=devtest2 --mount source=devtest2-vol,target=/app nginx:latest
+
+Inspect the volume
+$ docker volume inspect devtest-vol
+$ docker volume inspect devtest2-vol
+
+Put the contents of nginx/html in a volume [and read only]
+$ docker run -d --name=nginx-test --mount source=nginx-vol,destination=/usr/share/nginx/html la/static:latest
+$ docker run -d --name=nginx-test2 --mount source=nginx-vol,destination=/usr/share/nginx/html,readonly la/static:latest
+
+Inspect the volume
+$ docker volume inspect nginx-vol
+$ ls /var/lib/docker/volumes/nginx-vol/_data
+$ cat /var/lib/docker/volumes/nginx-vol/_data/index.html
+$ sudo su -
+$ cd /var/lib/docker/volumes/nginx-vol/_data
+$ cp index.html index2.html
+
+$ docker exec -ti nginx-test2 bash
+
+=====
+Docker Networks
+=================
+
+Create a network 
+$ docker network create my-net
+$ docker network ls
+
+Inspect the network
+$ docker network inspect my-net
+
+$ docker run -d --name=my-nginx --network my-net -p 8080:80 nginx:latest
+$ curl localhost
+
+=========
+Dockerfile
+=======================
+- FROM
+- RUN
+- CMD
+- ADD
+- COPY
+- ENV
+- EXPOSE
+- FROM
+- LABEL
+- MAINTAINER
+- STOPSIGNAL
+- USER
+- VOLUME
+- WORKDIR
+- ENTRYPOINT
+
+FROM busybox
+ENV foo/bar
+WORKDIR $(foo) # WORKDIR /bar
+ADD $foo #ADD /bar
+COPY \$foo/quux # COPY $foo/quux

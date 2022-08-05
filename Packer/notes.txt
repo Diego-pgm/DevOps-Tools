@@ -1,0 +1,364 @@
+Packer
+================
+
+What is Packer?
+
+It is an open-source tool that will be used to go and create 
+machine images.
+
+- Creating identical machine images
+- Runs on every major operating system
+- Creting machine images for multiple platforms in parallel
+- Packer does not replace configuration management
+- A machine image is a single static unit that contains a pre-
+configured opreating system.
+
+Essentially the idea of rather than go and making changes to an 
+existing server you just go and replace it with a new one.
+
+What packer let us do is create a single static image that's going
+to contain our pre-configured operating system, as well as the
+configuration we want on it.
+
+This could be Apache, MySQL, etc.
+
+download Packer:
+https://www.packer.io/downloads.html
+
+Packer Templates
+-------------------
+
+Templates are JSON files: We have the ability to write it ourselfs
+or automate the process and have code that generate the Packer 
+file.
+
+Template Components:
+- builders: determine what kind of image is going to be created.
+- descrption: (optional) nothing more than a string describing 
+what our template does.
+- min_packer_version: (optional) The minimal version of Packer that we can
+use.
+- post-processors: Once everything has been completed and the 
+image is created, there are some actions that can be executed,
+such as tagging a Docker image or publishing a Docker image to
+a repository.
+- provisioners: How we're going to configure our machine image,
+using Chef, Ansible, Puppet or shell scripts. 
+
+Packer commands
+-------------------------
+
+packer build: Runs all the builds in order and generate a set of
+artifacts taking a Packer template.
+Ex: Let's say you've defined an AMI builder, when everything is
+set and done we'll be getting an AMI as build artifact.
+
+packer fix: Finds backwards incompatible parts and brings them up
+to date with the latest version of Packer.
+
+packer inspect: What the template is doing.
+
+packer validate: Validates the syntax and configuration of a 
+template.
+
+Builder
+------------
+Is responsible for creating machines and generating images.
+
+Examples:
+- Amazon AMI
+- Azure Resource Manager
+- Docker
+- HyperV
+- OpenStack
+- VirtualBox
+- VMware
+
+Provisioners
+-------------------
+They install and configure the machine image after booting
+
+Example Provisioners:
+- Ansible: Local (with ansible installed on the guest) or remote 
+  (ssh and config the files)
+  the server
+- Chef: Chef-solo (locally), Chef server (remotely)
+- File: Uploads files to the machine that is being built by Packer.
+- Powershell (Windows)
+- Puppet: Use Puppet server, which will go and connect to the 
+  Puppet master server and then go configure instance that way.
+- Shell: Shell command or shell scripts to configure the instance.
+
+Post-Processors
+--------------------------
+They run after the image is built by the builder and provisioned
+by the provisioner.
+
+This takes actions like uploading artifacts or going and 
+repackaging.
+
+Example Post-Processors:
+- Amazon Import: OVA to create AMI out of it
+- Cheksum: Create a checksum for the artifact
+- Docker Push: Specify a repository and a tag and push to a remote
+  repository
+- Google Compute Inage Exporter
+- Shell
+- Vagrant: Create a Vagrant box file based off of a supportive
+  builder.
+- vSphere: VMWare artifact and upload it to a vSphere endpoint.
+
+=================
+Install Packer
+====================================
+
+Linux:
+
+Navigate to /usr/local/bin and download the Packer zip file
+$ cd /usr/local/bin/
+$ wget https://releases.hashicorp.com/packer/1.2.3/packer_1.2.3_linux_amd64.zip
+
+Install unzip
+$ yum install unzip
+$ unzip packer_1.2.3_linux_amd64.zip
+$ rm packer_1.2.3_linux_amd64.zip
+
+Check install version
+$ cd ~/
+$ packer --version 
+
+==========
+Creating a Packer template
+===================================
+
+Create a directory called packer and packer.json
+$ mkdir -p packer
+$ cd packer
+$ vi packer.json
+
+Start with the variable section, then builder section, then 
+provisioner (here we specify the inline commands for the image)
+and we use the linuxacademy node.js image for this example
+{
+  "variables": {
+    "repository": "la/express",
+    "tag": "0.1.0"
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "author": "Diego Perez",
+      "image": "node",
+      "commit": true,
+      "changes": [
+        "EXPOSE 3000"
+      ]
+    }
+  ],
+  "provisioner": [
+    {
+      "type": "shell",
+      "inline": [
+        "apt-get update && apt-get install curl",
+        "mkdir -p /var/code",
+        "cd /root",
+        "curl -L https://github.com/linuxacademy/content-nodejs-hello-world/archive/v1.0.tar.gz -o code.tar.gz",
+        "tar zxvf code.tar.gz -C /var/code --strip-components=1",
+        "cd /var/code",
+        "npm install"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "docker-tag",
+      "repository": "{{user `repository`}}",
+      "tag": "{{user `tag`}}"
+    } 
+  ]
+}
+
+Validate that everything works right
+$ packer validate packer.json
+
+Do a packer build
+$ packer build -var 'tag=0.0.1' packer.json
+
+Check the docker images
+$ docker images
+
+Execute the container
+$ docker run -dt -p 80:3000 --entrypoint "/usr/local/bin/node" la/express:0.0.1 /var/code/bin/www
+
+========
+What is Cloud init?
+============================
+
+Multi-distribution package that handles early initialization of a 
+cloud instance
+
+Use Cases:
+- Setting a default locale
+- Setting an instance hostname
+- Generating instance SSH private keys
+- Adding SSH keys to a user's.ssh/authorized_keys
+- Setting up ephemeral mount points
+- Configuring network devices
+
+------------------
+Cloud init Commands
+------------------------
+
+cloud-init init: Initialized cloud-init and performs initial 
+modules. It is only intended to run once and the location of the
+files are in /var/lib/cloud/instance/sim or /var/lib/cloud/sim
+
+cloud-init modules: Activates modules using a given config key.
+
+cloud-init single: Runs a single module 
+
+cloud-init dhclient-hook: Runs the dhclient hook to record network
+info.
+
+cloud-init features: Lists defined features
+
+cloud-init analyze: Analyzes cloud-init logs and data
+
+cloud-init devel: Runs development tools
+
+cloud-init collect-logs: Collects and tar all cloud-init debug 
+info.
+
+cloud-init clean: Removes logs and artifacts so cloud-init can re-
+run.
+
+cloud-init status: Reports cloud-init status or wait on completion
+
+-------
+Formats
+-------------------
+
+User-Data Script: 
+- Typically used by those who just want to execute a shell script
+- Begins with #! or Content-Type:text/x-shellscript when using a
+MIME archive.
+
+Include File:
+- This contet is an include file.
+- Begins with #include or Content-Type:text/x-include-url when 
+using a MIME archive.
+
+Cloud Config Data:
+- Cloud-config is the simplest way to accomplish some things via 
+user-data.
+- Using cloud-config syntax the user can specify certain things in
+a human friendly format.
+- Begins with: #cloud-config or Content-Type:text/cloud-config 
+when using a MIME archive.
+
+Upstart Job:
+- Content is placed into a file in /etc/init and will be consumed
+by upstart as any other upstart job.
+- Begins with #upstar-job or Content-Type:text/upstart-job when
+using a MIME archive.
+
+Cloud Boothook
+- This content is boothook data. It is stored in a file under 
+/var/lib/cloud and then executed inmediatly
+- Begins with #cloud-boothook or Content-Type:text/cloud-boothook
+when using a MIME archive
+
+Part Handler:
+- It contains custom code (python) for either suppor new mime-type
+in multi-part user data, or overriding the existing handlers for
+supported mime-types
+- Begins with: #part-handler or Content-Type:text/part-handler when
+using a MIME archive.
+
+==============
+Example Hand on labs
+======================
+1. Install Packer
+2. Create Packerfile
+{
+  "variables": {
+    "instance_size": "t2.small",
+    "ami_name": "ami-<USERNAME>",
+    "base_ami": "ami-1853ac65",
+    "ssh_username": "ec2-user",
+    "vpc_id": "",
+    "subnet_id": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "source_ami": "{{user `base_ami`}}",
+      "instance_type": "{{user `instance_size`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_timeout": "20m",
+      "ami_name": "{{user `ami_name`}}",
+      "ssh_pty" : "true",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "tags": {
+        "Name": "App Name",
+        "BuiltBy": "Packer"
+      }
+    }
+  ],
+  "description": "AWS image",
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum update -y",
+        "sudo yum install -y git"
+      ]
+    }
+  ]
+}
+
+We need to obtain our variable values for the command at the end of this step.
+
+base_ami
+In a new browser tab, navigate to EC2.
+Click Launch Instance.
+Copy the AMI ID at the end of the "Amazon Linux AMI" line, and paste it into a text file.
+vpc_id
+Navigate to VPC > Your VPCs.
+Copy the VPC ID, and paste it into a text file.
+subnet_id
+Click Subnets in the left-hand menu.
+Check the box to the left of the name for the first subnet in the list.
+Ensure Auto-assign Public IP is set to yes for this subnet.
+Copy the Subnet ID, and paste it into a text file.
+Run the Command
+Use the values you gathered to populate the following command in the Cloud9 terminal:
+
+packer build -var 'ami_name=ami-<USERNAME>' -var 'base_ami=<AMI_ID>' -var 'vpc_id=<VPC_ID>' -var 'subnet_id=<SUBNET_ID>' packer.json
+Once the command has completed, copy the AMI ID from the output.
+
+In another browser tab, navigate to EC2 > AMIs to verify your new AMI is listed.
+
+We need to obtain our variable values for the command at the end of this step.
+
+base_ami
+In a new browser tab, navigate to EC2.
+Click Launch Instance.
+Copy the AMI ID at the end of the "Amazon Linux AMI" line, and paste it into a text file.
+vpc_id
+Navigate to VPC > Your VPCs.
+Copy the VPC ID, and paste it into a text file.
+subnet_id
+Click Subnets in the left-hand menu.
+Check the box to the left of the name for the first subnet in the list.
+Ensure Auto-assign Public IP is set to yes for this subnet.
+Copy the Subnet ID, and paste it into a text file.
+Run the Command
+Use the values you gathered to populate the following command in the Cloud9 terminal:
+
+packer build -var 'ami_name=ami-<USERNAME>' -var 'base_ami=<AMI_ID>' -var 'vpc_id=<VPC_ID>' -var 'subnet_id=<SUBNET_ID>' packer.json
+Once the command has completed, copy the AMI ID from the output.
+
+In another browser tab, navigate to EC2 > AMIs to verify your new AMI is listed.

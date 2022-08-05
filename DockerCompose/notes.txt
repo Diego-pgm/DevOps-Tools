@@ -1,0 +1,34 @@
+Docker Compose
+=========================
+
+Install Docker compose
+
+As root
+
+$ curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ cd /usr/local/bin
+$ chmod a+x docker-compose
+$ cd ~/
+$ docker-compose --version
+
+
+Docker Compose commands
+----------------------------
+
+docker-compose.yml 
+
+version: '3.3'
+services:
+  redis:
+    image: redis:latest
+  nginx:
+    image: nginx:latest
+
+Get the version
+$ docker-compose version
+
+Help Menu
+$ docker-compose --help
+
+Build an image from a docker-compose file
+$ docker-compose build

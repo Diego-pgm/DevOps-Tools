@@ -1,0 +1,432 @@
+Configuration Management
+================================
+
+Resolves configuration drift, configuration drift is a data center
+environment term, the idea is that you have a certain state you 
+want to maintain, this can apply to hardware and software.
+
+Maintaining a desired state 
+
+The process of systematically handling changes to a system
+
+Maintains integrity of a system over time
+
+Automation plays an key role
+
+- Puppet
+- Ansible
+- Chef
+- Salt
+
+------
+Idempotent Behavior
+------------------------
+
+Idempotence: Is an operation that can be applied multiple times
+without changing the result beyond the initial application.
+
+1x1=1 (We want to install apache once)
+
+Configuration management tools will avoid repeating tasks
+
+The desired state is maintained even if you run it multiple times
+
+The behavior is not necessarily enforced in all cases
+
+--------
+Why Use Configuration Management?
+------------------------------------
+
+- Quick Provisioning of New Servers
+- Quick Recovery from Critical Events
+- No more snowflake Servers
+- Version Control for the Server Environment *
+- Replicated Environments **
+- Infrastructure because disposable ***
+
+* As system admins or DevOps engineers we want to make sure that our
+servers conform to a desired state and any time the server drifts
+from that state, when the automation tool runs, it will go and 
+correct that drift and return the server back to that desired 
+state.
+
+** I have the ability to go and set up your dev env exactly like
+the production env.
+
+*** If we have a server and it gets hacked I'm able to go and pull
+that server from the rack and replace it with a new one.
+
+            | Ansible    | Puppet                   | Chef
+------------------------------------------------------------------
+script lang | YAML       | Custom DSL based on Ruby | Ruby
+------------------------------------------------------------------ 
+infrastruct | Controller | Puppet Master synchroni  | Chef worksta
+            | machine    | zes config on Puppet     | tions push
+            | applies    | Nodes                    | config to
+            | config on  |                          | Chef serv
+            | nodes via  |                          | from which
+            | SSH        |                          | the Nodes
+            |            |                          | will be updt
+------------------------------------------------------------------
+Req spec    | No         | Yes                      | Yes  
+soft for    |            |                          |
+nodes       |            |                          |
+-------------------------------------------------------------------
+Provides    | No any com | Yes, via Puppet Master   | Yes via Chef
+centrilized | puter can  |                          | Server
+point of    | be a contr |                          |
+control     | oller.     |                          |
+------------------------------------------------------------------
+Script      | Playbook / | Manifests/Modules        | Recipes/
+Terminology | Roles      |                          | Cookbooks
+------------------------------------------------------------------
+Task Exec   | Sequential | Non-Sequential           | Sequential
+Order       |            |                          |
+------------------------------------------------------------------
+
+============
+What is Puppet
+==========================
+
+Puppet is designed to manage the configuration of Unix-like and
+Microsoft Windows systems declaratively
+
+Describes system resources and their state using the Puppet DSL
+
+The Puppet DSL is based on Ruby
+
+Resource types are used to manage system resources (user, group, 
+service,  package, file)
+
+Resource types are declared in maifests
+
+Resource type format:
+<TYPE>{'<TITLE>':
+ <ATTRIBUTE>=><VALUE>
+}
+
+Example:
+user{'username':
+ ensure => present,
+ uid => '102',
+ gid => 'wheel',
+ shell => '/bin/bash',
+ home => '/home/username',
+ managehome => true,
+}
+
+There are two ways of running puppet: locally or in a master-
+client setup.
+
+-------------
+Puppet Commands
+----------------------
+
+$ puppet apply:    manages systems without needing to contact a 
+                   Puppet master server.
+$ puppet agent:    Manages systems with the help of a Puppet 
+                   master.
+$ puppet cert:     Helps manage Puppet's built-in certificate 
+                   auth (CA).
+$ puppet module:   Is a multi-purpose tool for working with Puppet
+                   modules.
+$ puppet resource: Lets you interactively inspect and manipulate
+                   resources on a system.  
+$ puppet parser:   Lets you validate Puppet code to make sure it
+                   contains no syntax errors.
+=============
+Chef
+====================
+
+Chef is both the name of a company, and the name of a config 
+management tool written in Ruby.
+
+It uses a pure Ruby DSL
+
+Use Chef Development Kit (Chef DK) to get the tools to test your
+code.
+
+Chef uses a client-server model. (It also supports Chef solo)
+
+It utilizes a declarative approach to configuration management.
+
+Resources are idempotent.
+
+Because Chef uses Ruby we need a good linting tool,
+Chef tools:
+ - Cookstyle
+ - Foodcritic
+ - ChefSpec
+ - InSpec
+ - Test Kitchen
+
+Use resources to describe your infrastructure
+A Chef recipe is a file that groups related resources.
+Chef cookbook provides structure to your recipes.
+Use the knife command for interacting with the Chef server.
+
+----
+chef-client
+---------------
+
+A chef client is an agent that runs nodes managed by Chef
+The agent will bring the node into the expected state:
+ - Registering and authenticating the node with the Chef server.
+ - Building the node object.
+ - Synchronizing cookbooks.
+ - Taking the appropiate and required actions to configure the 
+   node.
+ - Looking for exceptions and notifications
+
+------
+chef-server-ctl
+------------------
+
+Is used to:
+ - Start and stop individual services.
+ - Reconfigure the Chef server
+ - Gather Chef server log files.
+ - Backup and restore Chef server data.
+
+$ chef-server-ctl restore PATH_TO_BACKUP (options): Is used to 
+restore the Chef server data from a backup. 
+$ chef-server-ctl backup-recover: This command forces the Chef 
+server to attempt to become the backup server.
+$ chef-server-ctl cleanse: If I run the reconfigure subcommand and
+I want to undo it, I use the cleanse subcommand.
+$ chef-server-ctl gather-logs: Is used to gather logs.
+$ chef-server-ctl ha-status: Check to see if the Chef servers are
+running in high availability
+$ chef-server-ctl show-config: If I'm going to run the reconfigure
+command, execute show config first to see what kind of 
+configuration will be generated.
+$ chef-server-ctl restart SERVICE_NAME: Restart all the services
+that are enabled on the Chef server.
+$ chef-server-ctl service-list: Get a listing of all the available
+services on your Chef server.
+$ chef-server-ctl start SERVICE_NAME: Start the service.
+$ chef-server-ctl status: Status of the services.
+$ chef-server-ctl stop SERVICE_NAME: Stop the service.
+
+----
+chef-solo
+-------------
+
+Chef-solo
+ - A command that executes chef-client to converge cookbooks in a 
+   way that does not require the Chef server.
+ - Uses chef-client's Chef local mode.
+
+Does not support
+ - Centralized distribution of cookbooks.
+ - A centralized API that interacts with and integrates infrastruc
+   ture components.
+ - Authentication or authorization.
+
+chef-solo supports two locations from which cookbooks can be run.
+ - A local directory.
+ - A URL at which a tar.gz archive is located.
+
+------
+Cookbooks
+-------------------
+
+A cookbook is the fundamental unit of configuration and policy
+distribution. A cookbook defines a scenario and contains 
+everything that is required to support that scenario:
+ - Recipes that specify the resources to use and the order in 
+   which they are to be applied.
+ - Attribute values.
+ - File distributions.
+ - Templates.
+ - Extensions to Chef, such as custom resources and libraries.
+
+------
+Cookbooks Commands
+--------------------
+
+knife cookbook: is a command-line tool that is going to go and 
+provide an interface between the local Chef repo and the Chef
+server.
+
+You use knife to manage nodes, cookbooks, and recipes, roles, env
+ironments, and data bags, resources within various cloud environm
+ents, the installation of the chef-client, and the searching of 
+index data on the Chef server.
+
+$ knife cookbook generate COOKBOOK_NAME (options): Gen a cookbook
+$ knife cookbook delete COOKBOOK_NAME[COOKBOOK_VERSION](options)
+$ knife cookbook download COOKBOOK_NAME[COOKBOOK_VERSION](options)
+$ knife cookbook list (options)
+$ knife cookbook metadata (options)
+$ knife cookbook show COOKBOOK_NAME
+$ knife cookbook upload [COOKBOOK_NAME...] (options)
+
+
+==========
+Ansible
+==========================================
+
+What is ansible
+-----------------
+
+Open source software that automates software provisioning config
+management, and application deployment.
+
+Agentless: There's no agent that is going to be installed on the 
+node.
+
+Playbook: Is what Ansible uses for deployment and orchestration, 
+at its very basic level, playbooks can be used for configuration
+management of remote systems, at a higher level it can be used
+for multi-tiered rollouts.
+
+Zero downtime or rolling updates
+
+----
+Ansible Commands
+---------------------
+
+*REPL Real-time Eval Print Loop
+
+ansible: Define and run a single tsak playbook against a set of
+         hosts:
+         $ ansible <host-pattern> [options]
+ansible-config: View, edit and manage ansible configuration:
+         $ ansible-config [view|dump|list][--help][options][ansible.cfg]
+ansible-console: REPL console for executing Ansible tasks:
+         $ ansible-console[<host-pattern>][options]
+ansible-doc: plugin documentation tool:
+         $ ansible-doc[-l|-F|-s][options][-t<plugin type>][plugin]
+
+-----------
+Ansible Commands
+---------------------------
+
+ansible-galaxy: This command manages Ansible roles in shared
+repositories. The default one is Ansible Galaxy: https://galaxy.ansible.com
+ $ ansible-galaxy [delete|import|info|init|install|list|login|remove|search|setup][--help][options]
+
+ansible-inventory: Used to display or dump the configured 
+inventory as Ansible sees it:
+ $ ansible-inventory [options] [host|group]
+
+ansible-playbook: Runs Ansible playbooks, executing the defined
+tasks on the targeted hosts:
+ $ ansible-playbook [options] playbook.yml [playbook2...]
+
+ansible-pull: Pulls playbooks from a VCS repo and executes them 
+for the localhost:
+ $ ansible-pull-U <repository> [options] [playbook.yml]
+
+ansible-vault: Encryption/decryption utility for Ansible data files:
+ $ ansible-vault [create|decrypt|edit|encrypt|encrypt_string|rekey|view][optios][vaultfile.yml]
+
+-----
+Ansible Inventory
+----------------------
+
+Default location: /etc/ansible/hosts
+-i <path> option on the command line
+
+INI-like Example:
+
+mail.example.com
+
+[webservers]
+foo.example.com
+bar.example.com
+
+[dbservers]
+one.example.com
+two.example.com
+
+YAML Example:
+all:
+ hosts:
+  mail.example.com:
+children:
+ webservers:
+  hosts:
+   foo.example.com:
+   bar.example.com:
+ dbservers:
+  hosts:
+   one.example.com
+   two.example.com
+
+-------
+The Config File
+----------------------
+
+Changes can be made and used in a configuration file which will
+be searched for in the following order:
+  - ANSIBLE_CONFIG (environment variable if set)
+  - ansible.cfg (in the current directory)
+  - ~/ansible.cfg (in the home directory)
+  - /etc/ansible/ansible.cfg
+
+-----
+Ansible Vault
+---------------------
+
+Stores sensitive data such as passwords or keys in encrypted files
+
+It can be used to encrypt files
+
+Can distribute those vault files or place them in source control
+Encrypt any structured data file used by Ansible
+ - group_vars/
+ - host_vars
+ - inventory variables
+ - variables loaded by include_vars or vars_files
+ - -e \@file.yml or -e \@file.json when using ansible-playbook
+
+The Ansible Vault ClI tool is used to edit files.
+
+ansible-playbook:
+ - --ask-vault-pass: ask for vault password
+ - --vault-password-file: vault password file
+
+------------
+Ansible Vault Commands
+--------------------------------------
+
+Creating Encrypted Files: ansible-vault create foo.yml
+Editing Encrypted Files: ansible-vault edit foo.yml
+Rekeying Encrypted Files: ansible-vault rekey foo.yml bar.yml baz.yml
+Encrypting Unencrypted Files: ansible-vault encrypt foo.yml bar.yml baz.yml
+Decrypting Encrypted Files: ansible-vault decrypt foo.tml bar.yml baz.yml
+Viewing Encrypted Files: ansible-vault view foo.yml bar.yml baz.yml
+Create encrypted variables to embed in yaml: ansible-vault encrypt_string--vault-id a_password_file 'foobar' --name 'the_secret'
+
+
+====================
+Ansible Setup Master-Node
+============================
+Create the SSH Keys for Exchanging between Master and Client Servers
+
+Create a new user called ansible and set the password.
+adduser ansible
+passwd ansible
+Add the ansible user to the sudoers file and make sure that it can use sudo without a password.
+visudo
+While logged in as ansible user, create the necessary keys.
+ssh-keygen
+Exchange the key with the remote client server.
+ssh-copy-id 10.0.1.101
+Add the client to the Ansible host file AS ROOT.
+vi /etc/ansible/hosts
+client
+cd /home/cloud_user
+cp playbook.yml /home/ansible/
+cd /home/ansible/
+chown ansible:ansible playbook.yaml
+su ansible -
+
+----------------------------------------------------
+Run the playbook on the master.
+ansible-playbook /home/cloud_user/playbook.yml
+Once the software is installed (it should show a success message), log in to the remote system and run the following:
+elinks
+You should see an About screen on your console.
