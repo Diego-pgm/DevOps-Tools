@@ -1,0 +1,81 @@
+Docker Swarm
+=========================
+
+Docker Swarm is a clustering and scheduling tool for Docker 
+containers.
+
+Provides redundancy for failover, in case of failur we have the
+ability to go and failover to another replica.
+
+Containers added or removed as demands changes
+
+Featute Highlights
+----------------------------
+
+- Cluster management integrated with Docker Engine.
+- Decentralized design.
+- Declarative service model
+- Scaling
+- Desired state reconciliation
+- Multi-host networking
+- Service Discovery
+- Load balancing
+- Secure by default
+- Rolling updates
+
+What is a Swarm?
+-------------------
+
+Multiple Docker hosts running in swarm mode
+Nodes can be managers, a worker, or both.
+Creating a service defines its optimal state.
+Docker works to maintain that desired state.
+
+Nodes:
+A node is nothing more than a Docker Engine instance.
+- Manager nodes.
+- Worker nodes.
+
+Services and Tasks:
+- Service: A service is nothing more than a task definition that 
+is going to be executed on the manager or worker nodes.
+- Replicated services: The tasks that are replicated.
+- Global services: The Swarm is going to run one task for the
+service on every available node within the cluster.
+- Tasks: Tasks are nothing more than Docker containers that are
+executing a command.
+
+Load balancing:
+- Ingress load balancing: Swarm uses Ingress load balancing to 
+expose the service you want to make available externally.
+- Published ports: There's 2 ways of handling published ports,
+You can configure yourself by specifying an unused port or the
+Swarm manager can go and do it for you, it also sets DNS.
+- Internal load balancing: Distribute requests among the services.
+
+==========
+Docker-Swarm Commands
+==========================
+
+For this lesson spin up 2 servers.
+
+$ docker swarm init --advertise-addr <leader-ip>: Init the Swarm
+$ docker node ls
+$ docker node inspect self: Inspect the node (can't run on worker)
+$ docker swarm update --autolock=true
+$ docker swarm unlock-key --rotate
+
+========
+Docker Swarm Service
+=================================
+
+$ docker service -h
+$ docker service create nginx:latest : Create a servoce
+$ docker service ls : list the services.
+$ docker service create --name nginx_test --replicas 2 -p 80:80 nginx:latest
+$ curl http://<leader-ip> : We got to set the leader ip 
+$ docker volume create swarm-vol : Create a volume for the Swarm
+$ docker service create --name nginx-vol -p 8080:80 --replicas 2 --mount source=swarm-vol,destination=/usr/share/nginx/html nginx:latest
+$ docker volume inspect swarm-vol
+$ docker service update --replicas 1 <service-id>
+$ docker service scale <service-name>=<num-replicas>
