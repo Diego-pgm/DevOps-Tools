@@ -24,11 +24,62 @@ services:
   nginx:
     image: nginx:latest
 
-Get the version
-$ docker-compose version
+$ docker-compose version: Get the version
+$ docker-compose --help: Help Menu
+$ docker-compose build: Build an image from a docker-compose file
+$ docker-compose up -d: Run docker-compose (detach mode)
+$ docker-compose ps: Check the containers
+$ docker-compose start: Start a containers
+$ docker-compose stop: Stop containers
+$ docker-compose rm -f: Remove containers
+$ docker-compose logs: Get the logs
+$ docker-compose pause: Pause the compose
+$ docker-compose unpause: Unpause the containers
+$ docker-compose down: Stop and remove containers.
+$ docker-compose config: Validate a docker-compose file
 
-Help Menu
-$ docker-compose --help
+=========
+Docker Compose File
+===============================
 
-Build an image from a docker-compose file
+with a dockerfile and index.html
+Dockerfile:
+FROM nginx
+WORKDIR /usr/share/nginx/html
+COPY index.html .
+
+index.html:
+<html>
+  <header>
+    <title>Hello!</title>
+  </header>
+  <body>
+    Hello There!
+  </body>
+</html>
+
+Create a docker-compose file that creates a container from the
+Dockerfile and a container with redis
+
+version: '3.3'
+services:
+  redis:
+    image: redis:latest
+  webapp:
+    build:
+      context: ./build
+      dockerfile: Dockerfile
+    volumes:
+      - nginx-vol:/usr/share/nginx/html
+    networks:
+      - nginx-net
+    links:
+      - redis
+volumes:
+  nginx-vol:
+network:
+  nginx-net:
+
 $ docker-compose build
+$ docker-compose up -d
+
