@@ -1,0 +1,260 @@
+RESTful APIs
+============================
+
+REpresentational State Transfer: Its an architectural style that 
+allows computer systems on the web to be able to go and 
+communicate.
+
+Separation of client and server: Changes made on the client wont 
+be made on the server and visceversa. The client could be a web
+based UI or it actually could be another RESTful service, If you
+want to change the frontend this doesn't affect the backend.
+
+Statelessness: This means that the server doesn't need to know 
+anything about the state of the client, and the client doesn't 
+need to know the state of the server
+
+Communication between clients and servers: The client is going to 
+send a request to the server to either retrieve or modify a 
+resource.
+
+REST requires that a client make a request to the server
+
+Send a Request:
+ - HTTP verb
+ - Header
+ - Resource path
+ - Message Body (optional)
+
+Get a Response:
+ - Content Type
+ - Response Code
+
+There are 4 basic HTTP verbs:
+ - GET: Reads data and doesn't change application state. 
+ - POST: Creates resources and queries for data using conditions.
+ - PUT: Updates resources.
+ - DELETE: Removes resources from the database.
+
+CRUD (Create Read Update Delete)
+
+The client sends the type of content that it is able to recieve:
+ - Accept
+ - MIME:
+   - type/subtype
+   - application/json
+   - application/xml
+
+Paths
+---------
+
+Request must contain a path to a resource
+
+Path should be in plural
+ - /customers
+Append an id to the path when acessing a single resource
+ - /customers/id
+ - / customers/id/orders/id
+
+Status Codes
+--------------
+
+200 OK: This is a succesful request.
+201 Created: Aresource has been created.
+202 Accepted: The request has been accepted but it hasn't been
+completed.
+204 No Content: Successful HTTP request where nothing is being
+returned in the response body.
+400 Bad Request: The request wasn't understood by the server due
+to malformed syntax.
+401 Unauthorized: Either the authentication header is missing or
+it contains invalid credentials.
+403 Forbidden: The client does not have permission to access this
+resource.
+404 Not Found: A resource matching the request doesn't exist.
+405: Method Not Allowed: The requested operation is not supported
+on the specified Artifact type by the Services API.
+409 Conflict: This status code may be returned if you try to 
+update an object while it is undergoing an asynchronous operation.
+500 Internal Server Error: An unhandled exception occurred on the
+server.
+
+Verbs and Status Codes
+-------------------------
+Get: return 200 (OK)
+POST: return 201 (CREATED)
+PUT: return 200 (OK)
+DELETE: return 204 (NO CONTENT)
+
+REST Example
+-------------
+
+Request
+GET /customers/123
+Accept: application/json
+
+Response
+Status Code: 200 (OK)
+Content-type: application/json
+{
+ "customer": {
+ "id": 123,
+ "first_name": "Bob",
+ "last_name": "Dobbs",
+ "email":"bdobbs@example.com"
+ }
+}
+
+
+======
+Service Oriented Architecture
+================================
+
+SOA: It's an approach used to create an architecture 
+
+- Loosely coupled services.
+- Standard interface and protocol
+- Seamless cross-platform integration
+
+Communicate over an enterprise service bus (ESB)
+
+A service has 4 properties
+- It logically represents a business activity with a specified
+outcome.
+- It is self-contained
+- It is a black box for its consumers
+- It may consist of other underlying services.
+
+In SOA services need to hear to a standard communications 
+agreement.
+
+Service autonomy is when services are independent
+
+Service discovery
+
+Service reusability
+
+SOA Manifesto
+----------------
+
+Business value is given more importance than technical strategy
+
+Stategic goals are given more importance than project specified
+benefits
+
+Intrinsic inter-operability is given more importance than custom
+integration
+
+Shared services are given more importance than specific purpose
+implementations.
+
+Flexibility is given more importance than optimization
+
+Evolutionary refinement is given mor importance than pursuit of
+initial perfection.
+
+=========
+Microservices
+======================
+
+A microservice architecture breaks an application up into a 
+collection of small, loosely-coupled services
+
+The opposite of monolithic architecture
+
+Microservices are small
+
+Microservices are loosely coupled
+
+Services should be fine-grained
+
+Protocols should be lightweight
+
+------
+What do microservices look like?
+------------------------------------
+
+There are many different ways to structure and organize a 
+microservice architecture.
+
+Services are independent:
+- Codebase
+- Running process
+- Build independently
+- Deployed independently
+- Scaled independently
+
+Why use Microservices?
+- Modularity
+- Flexibility
+- Scalability
+- Maintainability
+- Small autonomous teams
+- Continous refactoring
+- Enable continous integration and delivery
+
+===
+Agile
+====================
+
+A set of values and principles
+
+The idea behind agule is to help break down silos between 
+different organizations
+
+Adaptive planning
+
+Evolutionary development
+
+Early delivery
+
+Continous improvement
+
+Rapid and flexible response to change
+
+-----------------------
+The Manifesto for Agile Software Development
+------------------------------------------------
+
+Individuals and interactions more than processes and tools.
+Working Software more than comprehensive documentation.
+Customer Collaboration more than contract negotiation.
+Responding to Change more than following a plan.
+
+=====
+Test Driven Development
+===========================
+
+A software development process that relies on the repetition of a
+very short development cycle:
+- Writes an automated test case that defines a desired function.
+- Produces the minimum amount of code to pass that test
+- Refactors the new code to acceptable standards.
+
+TDD Steps
+-------------
+1. Add a test
+2. Run all tests and see if the new one fails
+3. Write some code
+4. Run tests
+5. Refactor code
+
+
+Install node js
+$ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+$ yum install -y nodejs
+
+Install gcc-c++ and make
+$ yum install -y gcc-c++ make
+
+Install the repo we're going to work with.
+$ git clone https://github.com/linuxacademy/content-lpic-ot-701-tdd.git
+
+Install packages
+$ npm install 
+
+Go inside tests/routes/ to run a test
+$ cd tests/routes/
+
+Run the tests
+$ npm test
