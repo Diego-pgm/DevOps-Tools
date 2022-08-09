@@ -1,0 +1,55 @@
+Immutable Servers
+===================================
+
+When managing servers we can go and manage them using 
+configuration management, which means that the server is 
+continuously being updated and then there is the Immutable server
+approach.
+
+------
+What are Immutable Servers?
+-----------------------------
+
+° Replace the server, don't update it.
+° Prebaking images with everything they need.
+° Images can be tested.
+° Failed images are rejected.
+° Passing images go to production.
+
+----------
+Creating Immutable Servers
+---------------------------------------
+
+° Boot a server instance from an origin image.
+° Configure the server instance into the desired state.
+° Save the server instance to a new server image.
+° Boot a test server instance from the new image.
+° Use CI or CD tools to automate deploys.
+° Use a deployment strategy like Blue-Green or Canary.
+
+-----
+Immutable Servers vs Configuration Management
+-------------------------------------------------------
+
+° Disposability vs persistence.
+° Changes applied to the base image vs running systems.
+° Tested vs untested servers.
+° Data is not stored locally.
+
+=====
+Blue-Green Deployments
+==============================
+
+The idea is to set up another new version of our application and
+test it until it works and then route the dns to the new version
+or route it to the old version
+
+====
+Canary Deployments
+================================
+
+This type of deployments its like the blue-green but you only show
+the new version to a stack of users (like 5% or 10%) and slowly
+showing the new version to new users until all users use it.
+
+This is helpful for taking metrics and load balance the apps.
