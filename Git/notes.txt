@@ -1,0 +1,92 @@
+Git
+==============
+
+° Modern version control system (VCS).
+° Actively maintained open-source project.
+° Developed by Linus Torvalds in 2005.
+° Uses a distributed architecture.
+° Designed for performance, security and flexibility.
+
+------
+Git vs Other VCSs
+------------------------
+
+° Git stores and thinks about information in a very different way.
+° Most other VCS store information as a list of file-based changes:
+  - This is delta-based version control
+° Git doesn't store data this way
+  - Git takes a snapshot of the current state
+
+----
+How Git Works
+-----------------------
+
+° Almost all operations are local.
+° Uses checksums to maintain data integrity
+° Nearly all of Git actions only add data.
+° Git file states:
+  - Commited
+  - Modified
+  - Staged
+° The Git directory is where metadata and an object database are
+stored
+  - This is what is cloned locally
+° The working tree pulled from the Git directory
+° The staging areas is a file in the Git directory
+° The basic Git workflow:
+  - Files are modified.
+  - Changes are selectively staged.
+  - Commit the changes that are staged.
+
+====
+Git Command Line Basics
+====================================
+
+$ git init
+$ git rm --cached 
+$ git add
+$ git commit
+$ git push
+$ git pull
+$ git mv <file>
+$ git fetch <branch>
+
+====
+Git Branches
+===================
+
+You can have a branch for development 
+$ git branch dev: Create the branch
+$ git checkout dev: Enter that branch
+$ git push origin dev: Push the branch
+$ git checkout -b <branch>: Create and enter a branch
+$ git merge feature_branch: Merge the feature_branch into the branch
+$ git branch -d: Delete a merged branch
+$ git branch -D: Delete branch (even if not merged)
+
+Rebase: When you make new commits and the branch looks like it has 
+no changes.
+$ git checkout -b new_feature
+Add a new html and commit it.
+$ git checkout dev
+$ git rebase new_feature
+
+====
+Git Submodule
+=========================
+
+There may be instances where you want to go and include a Git
+repository within your Git repository and this is what a submodule
+is.
+
+You can use submodules when you want to use thrid-party libraries.
+
+$ git submodule add <git-repo-https>
+
+====
+Git Tag
+===============
+
+$ git tag v1.0: Create a new tag.
+$ git checkout v1.0: Access that tag
+$ git tag -d <tag>
