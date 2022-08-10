@@ -1,0 +1,194 @@
+Content Delivery Network
+============================
+
+----
+What is a Content Delivery Network?
+-------------------------------------------
+
+° Geographically distributed network (collection) of poxy 
+servers and their data centers that work together to provide fast 
+delivery of Internet content.
+° Minimizes the distance between the visitors and the website's
+server.
+° Serves a large portion of the Internet content.
+° Not a replacement for proper web hosting, but helps cahche the
+content.
+
+---
+Benefits of Using a CDN
+-------------------------------
+
+° Uptime reliability: As long as the content is properly cached
+within the CDN, we could be doing maintenance on the website it
+could be completely offline and the customers wouldn't know cause
+we are using CDN rather than the origin server.
+° Improving website load times.
+° Reducing bandwith costs.
+° Increasing content availability and redundancy.
+° Improving website security
+
+----
+Push vs Pull CDNs
+----------------------------
+
+° Push
+ ° Content is distributed proactively to edge servers in the CDN
+ locations
+ ° The visitor's request goes to the closest points of Presence
+ (PoP) location rather than the origin server.
+ ° Content is pushed to the CDN (I am responsible for the content)
+° Pull
+ ° The end-user sends the request that pulls content from nearest
+ edge server
+ ° The CDN pulls the content from origin and caches it.
+ ° The downside is that if you are the first one to make a pull it
+ might take a while because it caches content from the origin 
+ server.
+
+====
+Cloud Foundry
+=====================
+
+Networking|Storage|Servers|Virtualization|O/S|Middleware|Runtime|
+Data|Application
+
+° On Premise: You are responsible for everything, from networking
+all the way up to the application.
+° Infrastructure as a Service (IaaS): providers will be 
+responsible for networking up to virtualization, then we are
+responsible for the OS, Middleware, Runtime, Data and 
+Applications.
+° Platform as a Service: It is more abstract from us, we are just
+responsible for the data as well as the application.
+° Software as a Service: The provider is going to be responsible 
+for networking all the way up to Application.
+
+---
+What is Cloud Foundry?
+-------------------------------
+
+Is an open-source multi-cloud application platform as a service,
+it allows us to focus on the development of the application rather
+than wehere are we going to deploy it to.
+
+° Originally developed by VMware.
+° Transferred to Pivotal Software.
+° Written in Ruby, Go and Java.
+° Release in 2011.
+° IaaS platform agnostic (If we want to deploy to AWS or Google).
+° Build, test, deploy applications easily.
+° It is available as open source, commercial product or through a
+hosting provider.
+° The CLI is supported on Linux, Mac and Windows.
+° Support any language or framework by using buildpacks.
+° Supports Docker images.
+
+Examples of supported languages
+- Java
+- Python
+- Node.js
+- Ruby
+- Go
+- .NET
+
+Examples of supported IaaS platforms:
+- VMware vSphere
+- AWS
+- Google Cloud Platform
+- Azure
+- OpenStack
+
+Certified providers:
+- Atos Canopy
+- CenturyLink App Fog
+- GE Predix
+- HPE Helion Stackato 4.0
+- Huawei FusionStage
+- IBM Bluemix
+- Pivotal Cloud Foundry
+- SAP Cloud Platform
+- Swisscom Application Cloud
+
+----
+Cloud Foundry Commands
+-------------------------
+
+° cf <SUB_COMMAND>
+° cf push <APP_NAME --random-route : Push the app up to CloudFoundry
+° cf apps: List of apps
+° cf app <APP_NAME>: Get more detailed info.
+
+----
+Cloud Foundry Manifest
+-------------------------------
+
+applications:
+- name: app-name
+  disk_quota: 256M
+  instances: 1
+  memory: 256M
+  random-route: true
+
+=====
+OpenStack
+===========================
+
+° Open-source infrastructure-as-a-service for cloud computing.
+° Controls large pools of:
+ ° Compute
+ ° Storage
+ ° Networking
+° Created by Rackspace Hosting and NASA in 2010.
+° Written mostly in Python and free under the Apache 2.0 liscense
+
+----
+OpenStack Components
+------------------------------
+
+° Compute (Nova): Is the cloud computing fabric controller, which
+is the main part of any IaaS system, it is designed to go and 
+manage and automate pools of computer resources which can work 
+with a wide variety of virtualization technologies.
+° Networking (Neutron): Neutron is the networking component of 
+OpenStack, it allows us to go and manage IP addresses, this 
+includes dedicated static IPs as well as DACP, we're able to go 
+and create our own networks and control the traffic.
+° Block storage (Cinder): It allows to manage persistent block-
+level storage and attach them to compute instances.
+° Identity (Keystone): It's the who are you and what do you want
+service, It authorizes users, services and endpoints, it uses 
+tokens for authentication.
+° Image (Glance): It allows you to go and manage guests VM images,
+disk images, and snapshots.
+° Object storage (Swift): A good way of looking at it is like
+Dropbox or Google Drive, it is ideal to storage large amounts of
+unstructured data that has the capacity to grow.
+° Dashboard (Horizon): It provides a web interface that allows you
+to go and interface with the various OpenStack components.
+° Orchestration (Heat): It works like CloudFormation.
+° Workflow (Mistral): It allows to define tasks and workflows, 
+manage and execute them in the cloud.
+° Telemetry (Ceilometer): It's responsible for metering 
+information.
+° Database (Trove): Its similar to AWS RDS, focuses on providing
+isolation at a high performance, it also allows to go and automate
+complex administrative tasks like deployments, configuration,
+patching, backups, restores as well as monitoring.
+° Elastic map reduce (Sahara): Is used for provisioning out 
+Hadoop clusters.
+° Bare metal (Ironic): It uses pixie for provisioning bare metal,
+as well as using IPMI for handling turning machines on and off.
+° Messaging (Zaqar): It's great for web and mobile apps.
+° Shared file system (Manila)
+° DNS (Designate)
+° Search (Searchlight): Improves the search capabilities of 
+OpenStack.
+° Key manager (Barbican): It allows to provision and manage 
+secrets within OpenStack.
+° Container orchestration (Magnum): Offers the ability to manage 
+orchestration engines such as Docker Swarm, Kubernetes, etc.
+° Root Cause Analysis (Vitrage): It allows to analyze and expand
+alarms and events within OpenStack.
+° Rule-based alarm actions (Aodh): Based off data that's collected
+in Ceilometer, it's able to go and trigger actions based off
+defined rules.
