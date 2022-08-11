@@ -1,0 +1,11 @@
+sudo mkdir /chrootjail
+sudo mkdir /chrootjail/{etc,bin}
+sudo mkdir -p /chrootjail{lib/x86_64-linux-gnu, lib64}
+tree -d /chrootjail/
+sudo cp /bin/bash /chrootjail/bin && sudo cp /bin/ls /chrootjail/bin && sudo cp /bin/grep /chrootjail/bin
+sudo ldd /bin/bash /bin/ls /bin/grep
+copy that files....
+ls -la /chrootjail/lib/x86_64-linux-gnu/
+sudo cp /lib64/ld-linux-x86-64.so.2 /chrootjail/lib64/
+sudo echo 'PS1="CHROOTJAIL #"' | sudo tee /chrootjail/etc/bash.bashrc
+sudo chroot /chrootjail /bin/bash
