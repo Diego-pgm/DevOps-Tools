@@ -4,3 +4,195 @@ Prometheus
 Prometheus is a monitoring platform that is a member of the Cloud
 Native Computing Foundation.
 
+It collects metrics by going and monitoring targets by scraping 
+metrics from an HTTP endpoint on the targeted system.
+
+Can trigger alerts if some condition is observed to be true.
+
+----
+Features
+-----------------------------
+
+° Prometheus uses a multi-dimensional data mode that lets it store 
+all the data as time series.
+° Flexible query language, It's a functional expression language 
+that lets us go and aggregate time series data in real-time, we
+can show this data as a graph, view in a tabular table within 
+Prometheus or consumed by an external system using the Prometheus
+API.
+° No dependency on distributed storage.
+° Timeseries collection happens via a pull model over HTTP.
+° Pushing timeseries supported via an intermediary gateway.
+° Targets discovered via service discovery or static configuration.
+° Multiple modes of graphing and dashboarding support.
+
+----
+Exporters
+---------------------------------
+° Prometheus developed for the purpose of monitoring web services.
+° blackbox_exporter
+° consul_exportes
+° graphite_exporter
+° haproxy_exporter
+° memcached_exporter
+° mysqld_exporter
+° node_exporter
+° statsd_exporter
+
+-----
+Node Exporter
+----------------------------
+
+° Has a configurable set of collectors for gathering various types
+of host-based metrics
+° Monitor the metrics for:
+ ° Disk I/O statistics
+ ° CPU load
+ ° Network statistics
+ ° Much much more.
+
+----
+Pushgateway
+------------------------------
+
+° Intermediary service that push metrics from jobs which cannot
+be scraped.
+° Only recommend for certain limited cases.
+° Great for ephemeral and batch jobs:
+ ° These kinds of jobs may not exist long enough to be scraped
+ ° Push their metrics to a Pushgateway
+
+----
+Alertmanager
+----------------------------------
+
+° Handles alerts sent by client applications such as the 
+Prometheus server.
+° Routes alerts:
+ ° Email
+ ° PagerDuty
+ ° OpsGenie
+° Grouping
+
+----
+Grafana
+-----------------------------
+
+° Open source visualization tool
+° Used on top of a variety of different data stores:
+ ° Graphite
+ ° InfluxDB
+ ° Elasticsearch
+ ° Logz.io
+ ° Prometheus
+° Create and edit dashboards
+° Graphite target parser
+
+====
+What is Logstash?
+=========================================
+
+Open source tool for collecting, parsing and storing logs for 
+future use.
+
+Logstash event processing pipeline three stages:
+ ° inputs 
+ ° filters
+ ° outputs
+
+---
+Inputs
+--------------------
+
+A pipeline can be configured to have multiple inputs.
+
+Inputs:
+ ° file
+ ° syslog
+ ° redis
+ ° beats
+
+----
+Filters
+-------------------------------
+
+Filters are used to parse and enrich your data, use conditionals
+to perform certain actions.
+° grok: parse query data into something more meaningful and queryable.
+° mutate: transform an event field.
+° drop: eliminate an event completely.
+° clone: make a copy of an event.
+° geoip: allows you to get geographical information on IP addr.
+
+----
+Outputs
+----------------------
+
+The final stage of the Logstash pipeline
+Outputs:
+ ° elasticsearch
+ ° file
+ ° graphite
+ ° statsd
+
+---
+Codecs
+------------------------------
+
+Codecs can be used to work with the inputs and the outputs
+Codecs:
+ ° json
+ ° multiline
+
+---
+Grok
+-------------
+
+Grok is by far the most popular Logstash filter, it parse 
+arbitrary and unstructured data into something more meaningfull.
+
+Grear for:
+ ° syslog logs
+ ° apache logs
+ ° other webserver logs
+ ° mysql logs
+ ° any log format written for humans
+
+---
+Grok Basics
+-----------------
+
+° Syntax for a grok pattern is %{SYNTAX:SEMANTIC}
+° SYNTAX is the name of the pattern that will match the text:
+ ° 3.44 will match the NUMBER
+ ° 55.3.244.1 will match the IP pattern
+° SEMANTIC is the identifier you give to the piece of text matched:
+ ° 3.44 couldbe the duration of an event
+ ° 55.3.244.1 client making a request
+° %{NUMBER:duration}%{IP:client}
+° Example:
+ ° 55.3.244.1 GET/index.html 15824 0.043
+ ° %{IP:client}%{WORD:method}%{URIPATHPARAM:request}%{NUMBER:bytes}%{NUMBER:duration}
+° After the grok filter, the event will have a few extra fields in
+it:
+ ° client: 55.3.244.1
+ ° method: GET
+ ° request: /index.html
+ ° bytes: 15824
+ ° duration: 0.043
+
+---
+Filebeat
+-----------------------
+
+Filebeat is a lightweight shipper for forwarding and centralizing
+log data. 
+
+Filebeat monitors the log files or locations that you specify, 
+collects log events.
+
+How it works: 
+ ° It starts an inputs that look in the specified location for log
+   data.
+ ° Filebeat starts a harvester for each log.
+ ° The harvester reads a single log for new content.
